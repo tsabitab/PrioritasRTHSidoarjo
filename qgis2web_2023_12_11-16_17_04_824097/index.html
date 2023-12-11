@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <style>
+        #map {
+            width: 1001px;
+            height: 778px;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="data/KerapatanVegetasi_1.js"></script>
+        <script src="data/KepadatanPenduduk_2.js"></script>
+        <script src="data/SuhuPermukaanRataRata_3.js"></script>
+        <script src="data/IndeksKenyamanan_4.js"></script>
+        <script src="data/PrioritasRTH_5.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[-7.682904482139545,112.34119295784508],[-7.000720688478578,113.21910305053449]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_ESRITopo_0');
+        map.getPane('pane_ESRITopo_0').style.zIndex = 400;
+        var layer_ESRITopo_0 = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+            pane: 'pane_ESRITopo_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_ESRITopo_0;
+        map.addLayer(layer_ESRITopo_0);
+        function pop_KerapatanVegetasi_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DN'] !== null ? autolinker.link(feature.properties['DN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Keterangan</strong><br />' + (feature.properties['Keterangan'] !== null ? autolinker.link(feature.properties['Keterangan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Skor</strong><br />' + (feature.properties['Skor'] !== null ? autolinker.link(feature.properties['Skor'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_KerapatanVegetasi_1_0(feature) {
+            switch(String(feature.properties['Keterangan'])) {
+                case 'Sangat Padat':
+                    return {
+                pane: 'pane_KerapatanVegetasi_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,68,27,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Padat':
+                    return {
+                pane: 'pane_KerapatanVegetasi_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(42,146,75,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sedang':
+                    return {
+                pane: 'pane_KerapatanVegetasi_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(123,199,124,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Jarang':
+                    return {
+                pane: 'pane_KerapatanVegetasi_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(201,234,194,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sangat Jarang':
+                    return {
+                pane: 'pane_KerapatanVegetasi_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(247,252,245,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_KerapatanVegetasi_1');
+        map.getPane('pane_KerapatanVegetasi_1').style.zIndex = 401;
+        map.getPane('pane_KerapatanVegetasi_1').style['mix-blend-mode'] = 'normal';
+        var layer_KerapatanVegetasi_1 = new L.geoJson(json_KerapatanVegetasi_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KerapatanVegetasi_1',
+            layerName: 'layer_KerapatanVegetasi_1',
+            pane: 'pane_KerapatanVegetasi_1',
+            onEachFeature: pop_KerapatanVegetasi_1,
+            style: style_KerapatanVegetasi_1_0,
+        });
+        bounds_group.addLayer(layer_KerapatanVegetasi_1);
+        map.addLayer(layer_KerapatanVegetasi_1);
+        function pop_KepadatanPenduduk_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Kecamatan</strong><br />' + (feature.properties['Kecamatan'] !== null ? autolinker.link(feature.properties['Kecamatan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Keterangan</strong><br />' + (feature.properties['Keterangan'] !== null ? autolinker.link(feature.properties['Keterangan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Luas (KM2)</strong><br />' + (feature.properties['Luas (KM2)'] !== null ? autolinker.link(feature.properties['Luas (KM2)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_KepadatanPenduduk_2_0(feature) {
+            switch(String(feature.properties['Keterangan'])) {
+                case 'Kepadatan Penduduk Sangat Tinggi':
+                    return {
+                pane: 'pane_KepadatanPenduduk_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(103,0,13,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kepadatan Penduduk Tinggi':
+                    return {
+                pane: 'pane_KepadatanPenduduk_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(234,55,42,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kepadatan Penduduk Sedang':
+                    return {
+                pane: 'pane_KepadatanPenduduk_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,164,134,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kepadatan Penduduk Rendah':
+                    return {
+                pane: 'pane_KepadatanPenduduk_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,245,240,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_KepadatanPenduduk_2');
+        map.getPane('pane_KepadatanPenduduk_2').style.zIndex = 402;
+        map.getPane('pane_KepadatanPenduduk_2').style['mix-blend-mode'] = 'normal';
+        var layer_KepadatanPenduduk_2 = new L.geoJson(json_KepadatanPenduduk_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KepadatanPenduduk_2',
+            layerName: 'layer_KepadatanPenduduk_2',
+            pane: 'pane_KepadatanPenduduk_2',
+            onEachFeature: pop_KepadatanPenduduk_2,
+            style: style_KepadatanPenduduk_2_0,
+        });
+        bounds_group.addLayer(layer_KepadatanPenduduk_2);
+        map.addLayer(layer_KepadatanPenduduk_2);
+        function pop_SuhuPermukaanRataRata_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Keterangan</strong><br />' + (feature.properties['Keterangan'] !== null ? autolinker.link(feature.properties['Keterangan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Skor</strong><br />' + (feature.properties['Skor'] !== null ? autolinker.link(feature.properties['Skor'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_SuhuPermukaanRataRata_3_0(feature) {
+            switch(String(feature.properties['Keterangan'])) {
+                case '>27°C':
+                    return {
+                pane: 'pane_SuhuPermukaanRataRata_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '24-27°C':
+                    return {
+                pane: 'pane_SuhuPermukaanRataRata_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,191,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '<24°C':
+                    return {
+                pane: 'pane_SuhuPermukaanRataRata_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_SuhuPermukaanRataRata_3');
+        map.getPane('pane_SuhuPermukaanRataRata_3').style.zIndex = 403;
+        map.getPane('pane_SuhuPermukaanRataRata_3').style['mix-blend-mode'] = 'normal';
+        var layer_SuhuPermukaanRataRata_3 = new L.geoJson(json_SuhuPermukaanRataRata_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_SuhuPermukaanRataRata_3',
+            layerName: 'layer_SuhuPermukaanRataRata_3',
+            pane: 'pane_SuhuPermukaanRataRata_3',
+            onEachFeature: pop_SuhuPermukaanRataRata_3,
+            style: style_SuhuPermukaanRataRata_3_0,
+        });
+        bounds_group.addLayer(layer_SuhuPermukaanRataRata_3);
+        map.addLayer(layer_SuhuPermukaanRataRata_3);
+        function pop_IndeksKenyamanan_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DN'] !== null ? autolinker.link(feature.properties['DN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Keterangan</strong><br />' + (feature.properties['Keterangan'] !== null ? autolinker.link(feature.properties['Keterangan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_IndeksKenyamanan_4_0(feature) {
+            switch(String(feature.properties['Keterangan'])) {
+                case 'Nyaman':
+                    return {
+                pane: 'pane_IndeksKenyamanan_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(26,150,65,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kurang Nyaman':
+                    return {
+                pane: 'pane_IndeksKenyamanan_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,192,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tidak Nyaman':
+                    return {
+                pane: 'pane_IndeksKenyamanan_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_IndeksKenyamanan_4');
+        map.getPane('pane_IndeksKenyamanan_4').style.zIndex = 404;
+        map.getPane('pane_IndeksKenyamanan_4').style['mix-blend-mode'] = 'normal';
+        var layer_IndeksKenyamanan_4 = new L.geoJson(json_IndeksKenyamanan_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_IndeksKenyamanan_4',
+            layerName: 'layer_IndeksKenyamanan_4',
+            pane: 'pane_IndeksKenyamanan_4',
+            onEachFeature: pop_IndeksKenyamanan_4,
+            style: style_IndeksKenyamanan_4_0,
+        });
+        bounds_group.addLayer(layer_IndeksKenyamanan_4);
+        map.addLayer(layer_IndeksKenyamanan_4);
+        function pop_PrioritasRTH_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DN'] !== null ? autolinker.link(feature.properties['DN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Keterangan</strong><br />' + (feature.properties['Keterangan'] !== null ? autolinker.link(feature.properties['Keterangan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_PrioritasRTH_5_0(feature) {
+            switch(String(feature.properties['Keterangan'])) {
+                case '1 (Non Prioritas)':
+                    return {
+                pane: 'pane_PrioritasRTH_5',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(26,150,65,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '2 (Non Prioritas)':
+                    return {
+                pane: 'pane_PrioritasRTH_5',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(138,204,98,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3 (Non Prioritas)':
+                    return {
+                pane: 'pane_PrioritasRTH_5',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,240,158,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4 (Prioritas Kedua)':
+                    return {
+                pane: 'pane_PrioritasRTH_5',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,223,154,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5 (Prioritas Pertama)':
+                    return {
+                pane: 'pane_PrioritasRTH_5',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(245,144,83,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_PrioritasRTH_5');
+        map.getPane('pane_PrioritasRTH_5').style.zIndex = 405;
+        map.getPane('pane_PrioritasRTH_5').style['mix-blend-mode'] = 'normal';
+        var layer_PrioritasRTH_5 = new L.geoJson(json_PrioritasRTH_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PrioritasRTH_5',
+            layerName: 'layer_PrioritasRTH_5',
+            pane: 'pane_PrioritasRTH_5',
+            onEachFeature: pop_PrioritasRTH_5,
+            style: style_PrioritasRTH_5_0,
+        });
+        bounds_group.addLayer(layer_PrioritasRTH_5);
+        map.addLayer(layer_PrioritasRTH_5);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'Prioritas  RTH<br /><table><tr><td style="text-align: center;"><img src="legend/PrioritasRTH_5_1NonPrioritas0.png" /></td><td>1 (Non Prioritas)</td></tr><tr><td style="text-align: center;"><img src="legend/PrioritasRTH_5_2NonPrioritas1.png" /></td><td>2 (Non Prioritas)</td></tr><tr><td style="text-align: center;"><img src="legend/PrioritasRTH_5_3NonPrioritas2.png" /></td><td>3 (Non Prioritas)</td></tr><tr><td style="text-align: center;"><img src="legend/PrioritasRTH_5_4PrioritasKedua3.png" /></td><td>4 (Prioritas Kedua)</td></tr><tr><td style="text-align: center;"><img src="legend/PrioritasRTH_5_5PrioritasPertama4.png" /></td><td>5 (Prioritas Pertama)</td></tr></table>': layer_PrioritasRTH_5,'Indeks Kenyamanan<br /><table><tr><td style="text-align: center;"><img src="legend/IndeksKenyamanan_4_Nyaman0.png" /></td><td>Nyaman</td></tr><tr><td style="text-align: center;"><img src="legend/IndeksKenyamanan_4_KurangNyaman1.png" /></td><td>Kurang Nyaman</td></tr><tr><td style="text-align: center;"><img src="legend/IndeksKenyamanan_4_TidakNyaman2.png" /></td><td>Tidak Nyaman</td></tr></table>': layer_IndeksKenyamanan_4,'Suhu Permukaan Rata-Rata<br /><table><tr><td style="text-align: center;"><img src="legend/SuhuPermukaanRataRata_3_27C0.png" /></td><td>>27°C</td></tr><tr><td style="text-align: center;"><img src="legend/SuhuPermukaanRataRata_3_2427C1.png" /></td><td>24-27°C</td></tr><tr><td style="text-align: center;"><img src="legend/SuhuPermukaanRataRata_3_24C2.png" /></td><td><24°C</td></tr></table>': layer_SuhuPermukaanRataRata_3,'Kepadatan Penduduk<br /><table><tr><td style="text-align: center;"><img src="legend/KepadatanPenduduk_2_KepadatanPendudukSangatTinggi0.png" /></td><td>Kepadatan Penduduk Sangat Tinggi</td></tr><tr><td style="text-align: center;"><img src="legend/KepadatanPenduduk_2_KepadatanPendudukTinggi1.png" /></td><td>Kepadatan Penduduk Tinggi</td></tr><tr><td style="text-align: center;"><img src="legend/KepadatanPenduduk_2_KepadatanPendudukSedang2.png" /></td><td>Kepadatan Penduduk Sedang</td></tr><tr><td style="text-align: center;"><img src="legend/KepadatanPenduduk_2_KepadatanPendudukRendah3.png" /></td><td>Kepadatan Penduduk Rendah</td></tr></table>': layer_KepadatanPenduduk_2,'Kerapatan Vegetasi<br /><table><tr><td style="text-align: center;"><img src="legend/KerapatanVegetasi_1_SangatPadat0.png" /></td><td>Sangat Padat</td></tr><tr><td style="text-align: center;"><img src="legend/KerapatanVegetasi_1_Padat1.png" /></td><td>Padat</td></tr><tr><td style="text-align: center;"><img src="legend/KerapatanVegetasi_1_Sedang2.png" /></td><td>Sedang</td></tr><tr><td style="text-align: center;"><img src="legend/KerapatanVegetasi_1_Jarang3.png" /></td><td>Jarang</td></tr><tr><td style="text-align: center;"><img src="legend/KerapatanVegetasi_1_SangatJarang4.png" /></td><td>Sangat Jarang</td></tr></table>': layer_KerapatanVegetasi_1,"ESRI Topo": layer_ESRITopo_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        </script>
+    </body>
+</html>
